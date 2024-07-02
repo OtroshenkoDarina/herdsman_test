@@ -12,6 +12,7 @@ import useHandleGraphics from "../graphics/useHandleGraphics";
 const useHandleGame = () => {
         const [isGameStarted, setIsGameStarted] = useState<boolean>(false)
         const [score, setScore] = useState<number>(0)
+        const [pixiApp, setPixiApp] = useState<Application<Renderer<HTMLCanvasElement>> | null>()
 
         const intervalRef = useRef<NodeJS.Timeout | null>(null);
         const handleGraphics: IHandleGraphics = useHandleGraphics()
@@ -45,6 +46,7 @@ const useHandleGame = () => {
 
             const parent: HTMLElement | null = document.getElementById('canvas_container')
             parent?.appendChild(app.canvas);
+            setPixiApp(app)
 
             rectangle = handleGraphics.createRectangle(YARD)
             app?.stage.addChild(rectangle);
@@ -214,10 +216,11 @@ const useHandleGame = () => {
         const endGame = () => {
             setIsGameStarted(false)
             setScore(0)
-            app?.destroy({removeView: true})
+            pixiApp?.destroy({removeView: true})
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
             }
+            setPixiApp(null)
         }
 
         return {isGameStarted, startGame, endGame, score}
